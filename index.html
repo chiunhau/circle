@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/paper-full.min.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+
+
+var randomColor, fillOrBlank;
+var vector = new Point(0, 0);
+var nthChild = 1;
+var rotate = true;
+var mousePoint = view.center;
+/*
+var propotion, width, height;
+for (var i = 0; i < 15; i++) {
+	randomColor = "hsl(" + getRandom(1, 360) + ", 100%, 50%)";
+	propotion = getRandom(30, 60);
+	width = getRandom(10,30);
+	height = width * propotion;
+	var vector1 = new Point(width / (-2), 0);
+	var vector2 = new Point(width / 2, height);
+	var rectangle = new Rectangle(new Point(mousePoint + vector1), new Point(mousePoint + vector2));
+
+	var path = new Path.Rectangle(rectangle);
+	path.fillColor = randomColor;
+	path.strokeColor = randomColor;
+};
+*/
+var children = project.activeLayer.children;
+for (var i = 0; i < children.length; i++) {
+		children[i].rotate(getRandom(-180, 180), mousePoint);
+	};
+
+var v = [];
+for (var i = 0; i < 40; i++) {
+	v[i] = getRandom(3, 10);
+};
+
+function onFrame(event) {
+	// Each frame, rotate the path 3 degrees around the point
+	// we defined earlier:
+	children = project.activeLayer.children;
+	if(rotate){
+		for (var i = 0; i < children.length; i++) {
+			children[i].rotate(v[i], mousePoint);
+		};
+	}
+	
+}
+
+function onMouseDown(event) {
+	if(nthChild <= 15){
+		randomColor = "hsl(" + getRandom(1, 360) + ", 100%, 65%)";
+		if (nthChild == 1) {
+			vector = new Point(0, 0);
+		} 
+		else {
+			vector = new Point(0, 16);
+		};
+		vector.angle = getRandom(-180,180);
+		if(getRandom(1,5) <= 2){
+			fillOrBlank = 'white';
+		}
+		else{
+			fillOrBlank = randomColor;
+		};
+		var circle = new Path.Circle({
+			center: mousePoint + vector,
+			radius: 50*(nthChild)-45,
+			strokeColor: randomColor,
+			fillColor: fillOrBlank,
+			strokeWidth : 10
+		});
+		project.activeLayer.insertChild(0, circle);
+		nthChild += 1;
+	}	
+	else{
+		if(rotate){
+			rotate = false;
+		}
+		else{
+			rotate = true;
+		}
+	};
+}
+function onMouseMove(event) {
+	mousePoint = event.point;
+}
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+</script>
+<style>
+	body{
+		margin:0;
+	}
+</style>
+</head>
+<body>
+	<canvas id="myCanvas" resize></canvas>
+</body>
+</html>
